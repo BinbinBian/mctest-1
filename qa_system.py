@@ -1,27 +1,17 @@
-## different answer scorers
-
-# scores highest the answer with words that appears most in the story
-# ignores words in answer that also appear in the question
-def overlapScorer(story,question,answer):
-    return len([word for word in story if word in set(answer).difference(question)])
-
-# does not ignore words in answer that also appear in the question
-def overlapScorer2(story,question,answer):
-    return len([word for word in story if word in answer])
-
-# like scorer1 but excludes stop words
-def overlapScorer3(story,question,answer):
-    stopwords = nltk.corpus.stopwords.words(fileids=['english'])
-    return len([word for word in story if word in set(answer).difference(question+stopwords)])
+from __future__ import division
+import sys
+from process_data import *
+from object_model import *
+import answer_scorers
 
 
 # answers a queston using an answer scorer
-def answerQuestion(story,question,answers,scorer):
+def answerQuestion(passage,question,answers,scorer):
             
     best_score = 0
     best_answer = answers[0]
     for answer in answers:
-        score = scorer(story,question,answer)
+        score = scorer(passage,question,answer)
         if  score > best_score:
             best_answer = answer
             best_score = score
@@ -30,21 +20,28 @@ def answerQuestion(story,question,answers,scorer):
 
 
 # scores an answerer on passages
-def evaluateOnPassages(scorer,passages,correct_answers,verbose = False):
+def evaluateOnPassages(scorer,passages,verbose = False):
     num_correct = 0
     num_total = sum([len(p.questions) for p in passages])
     for (i,passage) in enumerate(passages):
-        if verbose: print ' '.join(passage.story) + '\n'
+        if verbose: print passage.text + '\n'
         for (j,question) in enumerate(passage.questions):
-            answers = [a.atext for a in question.answers]
-            best_answer = answerQuestion(passage.story,question.qtext,answers,scorer)
-            best_index = [k for (k,a) in enumerate(question.answers) if a.atext == best_answer][0]
-            correct_index = correct_answers[i][j]
-            if best_index == correct_index: num_correct += 1
+            best_answer = answerQuestion(passage,question,question.answers,scorer)
+            if best_answer == question.correct_answer: num_correct += 1
             if verbose:
-                print ' '.join(question.qtext)
-                for a in question.answers: print '\t' + ' '.join(a.atext)
-                print '\n\tSelected answer: ' + ' '.join(best_answer)
-                print '\tCorrect answer: ' + ' '.join(question.answers[correct_index].atext) + '\n'
+                print question.text
+                for answer in question.answers: print '\t' + answer.text
+                print '\n\tSelected answer: ' + best_answer.text
+                print '\tCorrect answer: ' + question.correct_answer.text + '\n'
     return num_correct / num_total
 
+
+# takes two arguments: path to data and name of answer scorer
+def main():
+    passages = processData(sys.argv[1])
+    results = evaluateOnPassages(answer_scorers.main(),passages)
+    print results
+
+
+if __name__ == '__main__':
+    main()

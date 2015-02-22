@@ -1,25 +1,36 @@
-class Passage(object):
+import nltk
+
+class Text(object):
+    
+    def __init__(self, text):
+        self.text = text
+        self.words = nltk.word_tokenize(text)
+        self.sents = nltk.sent_tokenize(text)
+
+class Passage(Text):
 
     def __init__(self, title, story, questions):
+        Text.__init__(self,story)
         self.title = title
-        self.story = nltk.word_tokenize(story)
         self.questions = questions
     
     def display(self):
-        print ' '.join(self.story)
+        print self.text
         for q in self.questions:
-            print '\n' + ' '.join(q.qtext) +' ('+q.qtype+')'
+            print '\n' + q.text + ' (' + q.qtype + ')'
             for a in q.answers:
-                print '\t' + ' '.join(a.atext)
+                print '\t' + a.text
+            print '\n\tCorrect Answer: ' + q.correct_answer.text
         
-class Question(object):
+class Question(Text):
     
-    def __init__(self, qtext, qtype, answers):
-        self.qtext = nltk.word_tokenize(qtext)
+    def __init__(self, qtext, qtype, answers, correct_answer):
+        Text.__init__(self,qtext)
         self.qtype = qtype
         self.answers = answers
+        self.correct_answer = correct_answer
 
-class Answer(object):
+class Answer(Text):
     
     def __init__(self, atext):
-        self.atext = nltk.word_tokenize(atext)
+        Text.__init__(self,atext)
