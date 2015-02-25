@@ -24,7 +24,7 @@ def evaluateOnPassages(scorer,passages,verbose = False):
     num_correct = 0
     num_total = sum([len(p.questions) for p in passages])
     for (i,passage) in enumerate(passages):
-        if verbose: print passage.text + '\n'
+        if verbose: print passage.text + '\n\n***\n'
         for (j,question) in enumerate(passage.questions):
             best_answer = answerQuestion(passage,question,question.answers,scorer)
             if best_answer == question.correct_answer: num_correct += 1
@@ -39,7 +39,7 @@ def evaluateOnPassages(scorer,passages,verbose = False):
 # takes two arguments: path to data and name of answer scorer
 def main():
     passages = processData(sys.argv[1])
-    results = evaluateOnPassages(answer_scorers.main(),passages)
+    results = evaluateOnPassages(answer_scorers.main(),passages, verbose = False)
     print results
 
 

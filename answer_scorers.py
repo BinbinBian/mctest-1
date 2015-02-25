@@ -1,3 +1,5 @@
+import nltk
+
 ## different answer scorers
 
 # selects answer that appears most in the story
@@ -15,7 +17,7 @@ def overlapScorer3(passage,question,answer):
     return len([word for word in passage.words if word in set(answer.words).difference(question.words+stopwords)])
 
 def main():
-    return overlapScorer
+    return overlapScorer2
 
 if __name__ == '__main__':
     main()

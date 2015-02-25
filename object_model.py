@@ -15,7 +15,8 @@ class Passage(Text):
         self.questions = questions
     
     def display(self):
-        print self.text
+        print self.title + '\n'
+        print self.text + '\n\n***\n'
         for q in self.questions:
             print '\n' + q.text + ' (' + q.qtype + ')'
             for a in q.answers:
