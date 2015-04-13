@@ -8,9 +8,9 @@ import answer_scorers
 # answers a queston using an answer scorer
 def answerQuestion(passage,question,answers,scorer):
             
-    best_score = 0
+    best_score = scorer(passage,question,answers[0])
     best_answer = answers[0]
-    for answer in answers:
+    for answer in answers[1:]:
         score = scorer(passage,question,answer)
         if  score > best_score:
             best_answer = answer
